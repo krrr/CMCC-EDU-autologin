@@ -2,8 +2,8 @@
 import urllib.request as urlreq
 import http.cookiejar
 
-username = '18395920713'
-passwd = 'Syb3I4'
+username = ''
+passwd = ''
 
 cj = http.cookiejar.CookieJar()
 opener = urlreq.build_opener(urlreq.HTTPCookieProcessor(cj))
