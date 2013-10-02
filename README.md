@@ -1,2 +1,0 @@
-CMCC-EDU-autologin
-==================
