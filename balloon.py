@@ -4,7 +4,7 @@ def show(time):
     used, total = time
     ps = '''[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
     $objNotifyIcon = New-Object System.Windows.Forms.NotifyIcon
-    $objNotifyIcon.Icon = "D:\\1.ico"
+    $objNotifyIcon.Icon = "icon.ico"
     $objNotifyIcon.BalloonTipIcon = "Info"
     $objNotifyIcon.BalloonTipText = "%s/%s."
     $objNotifyIcon.BalloonTipTitle = "TEST"
@@ -15,14 +15,3 @@ def show(time):
     exit''' % (used, total)
 
     subprocess.Popen(['powershell.exe', ps])
-
-
-
-
-
-
-
-
-
-
-

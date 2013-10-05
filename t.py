@@ -1,6 +1,8 @@
 ﻿import re
 import urllib.request as urlreq
 import http.cookiejar
+import sys
+import balloon
 
 username = ''
 passwd = ''
@@ -20,12 +22,12 @@ acname = re.search(r'wlanacname=(.+?)&', iURL).group(1)
 acip = re.search(r'wlanacip=(.+?)&', iURL).group(1)
 
 temp = str(opener.open(iURL).read())
-try:  #get validation code
+try:  # get validation code
     hidvad = re.search(r"validateid\\'  value=\\'(.+?)\\'", temp).group(1)
     vad = hidvad[:4]
     hidvad = hidvad.replace('|', '%7C')
     data = 'username=%s&password=%s&loginvalidate=%s&loginhiddenvalidate=%s&loginmode=static&wlanacssid=CMCC-EDU&wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=' % (username,passwd,vad,hidvad,acname,acip,userip)
-except:  #no validation code
+except:  # no validation code
     data = 'username=%s&password=%s&loginmode=static&wlanacssid=CMCC-EDU&wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=' % (username,passwd,acname,acip,userip)
 
 temp = str(urlreq.urlopen(lURL, data.encode('utf-8')).read())

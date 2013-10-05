@@ -12,4 +12,4 @@ Usage/使用方法
 Automation/自动化
 ----
 Using the Scheduled task of Windows,you can login automatically when you connect to CMCC-EDU.see this [page](http://superuser.com/questions/262799/how-to-launch-a-command-on-network-connection-disconnection).
-But logout Login can only be done manually.
+But logout can only be done manually.
