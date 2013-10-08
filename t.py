@@ -4,8 +4,8 @@ import http.cookiejar
 import sys
 import balloon
 
-username = '18395920713'
-passwd = 'Syb3I4'
+username = ''
+passwd = ''
 
 cj = http.cookiejar.LWPCookieJar('cookie.txt')
 opener = urlreq.build_opener(urlreq.HTTPCookieProcessor(cj))
