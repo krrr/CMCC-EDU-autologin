@@ -4,8 +4,8 @@ import http.cookiejar
 import sys
 import balloon
 
-username = ''
-passwd = ''
+username = '18395920713'
+passwd = 'Syb3I4'
 
 cj = http.cookiejar.LWPCookieJar('cookie.txt')
 opener = urlreq.build_opener(urlreq.HTTPCookieProcessor(cj))
@@ -45,22 +45,23 @@ cj.save()
 sURL = re.search(r"window.location = \\'(.+?)\\'", temp).group(1)
 if sURL.find('user_status.php?') != -1:
     oURL ='http://' + serverip + ':7080/zmcc/cmcc_edu_do_logout.php'
-    # using POST
-    temp = str(opener.open(sURL.replace(' ', '%20')).read())
+    temp = opener.open(sURL.replace(' ', '%20')).read()
+    temp = temp.decode('gbk')
 
     import balloon
+    icopath = sys.argv[0].replace('t.py', 'icon.ico')
     ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', temp).group(1)
     ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', temp).group(1)
-    balloon.show(ba_re, ba_to, 3)
+    balloon.show(icopath, ba_re, ba_to, 4 )
 
     for i in ['logintime', 'remaintime', 'areacode', 'productid',
               'effecttime', 'expiretime', 'kestr', 'cf', 'logonsessid']:
-        eval('(i1) = re.search(r"value=(.+?) type=hidden name=(i2)>", temp)'
-             % {i1:i, i2:i})
+        vars()[i]= re.search(r'value=(.+?) type=hidden name=%s>' % i, temp)
     data = 'username=(username)&logintime=(logintime)&remaintime=(remaintime)\
 &areacode=(areacode)&wlanacip=(acip)\&wlanacname=(acname)\
 &wlanacssid=CMCC-EDU&wlanuserip=(userip)&productid=(productid)\
 &effecttime=(effecttime)\&expiretime=(expiretime)&presenttime=\
 &keystr=(keystr)&cf=(cf)&logouttype=TYPESUBMIT\
 &logonsessid=(logonsessid)' % vars()
+    print(vars())
     opener.open(oURL, data.encode('utf-8'))
