@@ -14,4 +14,5 @@ Automation/自动化
 ----
 Using the Scheduled task of Windows,you can login automatically when you connect to CMCC-EDU.see this [page](http://superuser.com/questions/262799/how-to-launch-a-command-on-network-connection-disconnection).
 But logout can only be done manually.
+
 借助Windows的计划任务功能，你能在成功连接至CMCC-EDU后自动登录。
