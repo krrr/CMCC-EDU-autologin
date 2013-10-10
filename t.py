@@ -1,19 +1,31 @@
 ﻿import re
-import urllib.request as urlreq
-import urllib.parse as urlpar
-import http.cookiejar
+try:
+    # for Python3
+    import urllib.request as urlreq
+    import http.cookiejar as Cookie
+except ImportError:
+    import urllib2 as urlreq
+    import cookielib as Cookie
 import sys
 
-username = ''
-passwd = ''
+try:
+    username = sys.argv[1]
+    passwd = sys.argv[2]
+except IndexError:
+    print('Usage: [username] [password] [remind]/[]' )
+    sys.exit()
 
-cj = http.cookiejar.LWPCookieJar('cookie.txt')
-opener = urlreq.build_opener(urlreq.HTTPCookieProcessor(cj))
+cookiejar = Cookie.LWPCookieJar('cookie.txt')
+opener = urlreq.build_opener(urlreq.HTTPCookieProcessor(cookiejar))
 opener.addheaders = [('User-agent', 'Mozilla/4.0 (compatible; MSIE 8.0;\
 Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.3072\
-9; .NET CLR 3.0.30729; Tablet PC 2.0)')]
+9; .NET CLR 3.0.30729; Tablet PC 2.0)'), ('Accept-Encoding', 'gzip, deflate')]
 
-temp = str(opener.open('http://8.8.8.8').read())
+try:
+    temp = str(opener.open('http://8.8.8.8').read())
+except:
+    print('Error: no network connection or network connected is not CMCC')
+    sys.exit()
 # iURL: for getting lURL,validates,userip,acip...
 # lURL: for sending all data to login(HTTP POST).
 iURL = re.search(r'<iframe class="Wp_frame" id="Wp_frame" src="(.+?)" ', temp).group(1)
@@ -40,38 +52,40 @@ except:  # no validation code
     % (username, passwd, acname, acip, userip)
 
 temp = str(opener.open(lURL, data.encode('utf-8')).read())
-cj.save()
 # sURL:for going to a page contains remianing time,logout URL.
 sURL = re.search(r"window.location = \\'(.+?)\\'", temp).group(1)
-if sURL.find('user_status.php?') != -1: # login succeed
+if sURL.find('user_status.php?') != -1:
+    print('Info: login succeed')
     oURL ='http://' + serverip + ':7080/zmcc/cmcc_edu_do_logout.php'
     temp = opener.open(sURL.replace(' ', '%20')).read()
     temp = temp.decode('gbk')
 
-    import balloon
-    icopath = sys.argv[0].replace('t.py', 'icon.ico')
-    ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', temp).group(1)
-    ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', temp).group(1)
-    balloon.show(icopath, ba_re, ba_to, 4)
+    if 'remind' in sys.argv:
+        import balloon
+        icopath = sys.argv[0].replace('t.py', 'icon.ico')
+        ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', temp).group(1)
+        ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', temp).group(1)
+        balloon.show(icopath, ba_re, ba_to, 4)
 
-    def logout(oURL, oURLpage):
-        datadic = {}
-        for i in ['logintime', 'remaintime', 'areacode', 'productid',
-                  'effecttime', 'expiretime', 'keystr', 'cf', 'logonsessid']:
-            try:
-                datadic[i] = re.search(r"<input type='hidden' name='%s'(\s+?)value='(.+?)'>" % i, oURLpage).group(2)
-            except AttributeError:
-                datadic[i] = ''
-
-        datadic.update(vars())
-        data = 'username=%(username)s&logintime=%(logintime)s&remaintime=%(remaintime)s\
-    &areacode=%(areacode)s&wlanacip=%(acip)s&wlanacname=%(acname)s\
-    &wlanacssid=CMCC-EDU&wlanuserip=%(userip)s&productid=%(productid)s\
-    &effecttime=%(effecttime)s&expiretime=%(expiretime)s&presenttime=\
-    &keystr=%(keystr)s&cf=%(cf)s&logouttype=TYPESUBMIT\
-    &logonsessid=%(logonsessid)s' % datadic
-        data = urlpar.quote_plus(data, safe='=&')
-        opener.open(oURL, data.encode('utf-8'))
+#    logout seems no need anymore
+#    def logout(oURL, oURLpage):
+#        datadic = {}
+#        for i in ['logintime', 'remaintime', 'areacode', 'productid',
+#                  'effecttime', 'expiretime', 'keystr', 'cf', 'logonsessid']:
+#            try:
+#                datadic[i] = re.search(r"<input type='hidden' name='%s'(\s+?)value='(.+?)'>" % i, oURLpage).group(2)
+#            except AttributeError:
+#                datadic[i] = ''
+#
+#        datadic.update(vars())
+#        data = 'username=%(username)s&logintime=%(logintime)s&remaintime=%(remaintime)s\
+#&areacode=%(areacode)s&wlanacip=%(acip)s&wlanacname=%(acname)s\
+#&wlanacssid=CMCC-EDU&wlanuserip=%(userip)s&productid=%(productid)s\
+#&effecttime=%(effecttime)s&expiretime=%(expiretime)s&presenttime=\
+#&keystr=%(keystr)s&cf=%(cf)s&logouttype=TYPESUBMIT\
+#&logonsessid=%(logonsessid)s' % datadic
+#        data = urlpar.quote_plus(data, safe='=&')
+#        opener.open(oURL, data.encode('utf-8'))
 
 else:
-    print('login failed')
+    print('Error: login failed')
