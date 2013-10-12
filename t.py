@@ -1,5 +1,5 @@
 ﻿import re
-import urllib.request as urlreq
+import urllib.request as Urlreq
 import http.cookiejar as Cookie
 import sys
 
@@ -11,7 +11,7 @@ except IndexError:
     sys.exit()
 
 cookiejar = Cookie.LWPCookieJar('cookie.txt')
-opener = urlreq.build_opener(urlreq.HTTPCookieProcessor(cookiejar))
+opener = Urlreq.build_opener(Urlreq.HTTPCookieProcessor(cookiejar))
 opener.addheaders = [('User-agent', 'Mozilla/4.0 (compatible; MSIE 8.0;\
 Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.3072\
 9; .NET CLR 3.0.30729; Tablet PC 2.0)'), ('Accept-Encoding', 'gzip, deflate')]
@@ -19,7 +19,7 @@ Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.3072\
 try:
     temp = str(opener.open('http://8.8.8.8').read())
 except:
-    print('Error: no network connection or network connected is not CMCC')
+    print('Error: network connection is bad or network connected is not CMCC')
     sys.exit()
 
 # iURL: for getting lURL,validates,userip,acip...
@@ -31,11 +31,11 @@ userip = re.search(r'wlanuserip=(.+?)&', iURL).group(1)
 acname = re.search(r'wlanacname=(.+?)&', iURL).group(1)
 acip = re.search(r'wlanacip=(.+?)&', iURL).group(1)
 
-def login_noC():
-    temp = str(opener.open(iURL).read())
+def login_noc():
+    ipage = str(opener.open(iURL).read())
 
     try:  # get validation code
-        hidvad = re.search(r"validateid\\'  value=\\'(.+?)\\'", temp).group(1)
+        hidvad = re.search(r"validateid\\'  value=\\'(.+?)\\'", ipage).group(1)
         hidvad = hidvad.replace('|', '%7C')
         vad = hidvad[:4]
         data = 'username=%s&password=%s&loginvalidate=%s&loginhiddenvalidate=%s\
@@ -47,52 +47,63 @@ def login_noC():
 &wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=1'\
         % (username, passwd, acname, acip, userip)
 
-    lPAGE = str(opener.open(lURL, data.encode('utf-8')).read())
-    return checker(lPAGE)
+    lpage = opener.open(lURL, data.encode('utf-8')).read()
+    return checker(lpage.decode('gbk'))
 
 
-def login_C():
+def login_c():
     cookiejar.load()
     data = 'wlanacname=%s&wlanacip=%s&wlanuserip=%s&wlanacssid=CMCC-EDU\
 &loginmode=cookie' % (acname, acip, userip)
 
-    lPAGE = str(opener.open(lURL, data.encode('utf-8')).read())
-    return checker(lPAGE)
+    lpage = opener.open(lURL, data.encode('utf-8')).read()
+    return checker(lpage.decode('gbk'))
 
-def checker(lPAGE):
-    if lPAGE.find('user_status.php?') != -1:
+def checker(lpage):
+    if 'user_status.php?' in lpage:
         print('Info: login succeed')
-        savecookie(lPAGE,lURL)
+        savecookie(lpage,lURL)
         # Time Reminder
         if 'remind' in sys.argv:
             import balloon
             # sURL:for going to a page contains remianing time,logout URL.
-            sURL = re.search(r"window.location = \\'(.+?)\\'", lPAGE).group(1)
-            temp = opener.open(sURL.replace(' ', '%20')).read()
-            temp = temp.decode('gbk')
+            surl = re.search(r"window.location = '(.+?)';", lpage).group(1)
+            spage = opener.open(surl.replace(' ', '%20')).read()
+            spage = spage.decode('gbk')
             icopath = sys.argv[0].replace('t.py', 'icon.ico')
-            ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', temp).group(1)
-            ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', temp).group(1)
+            ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', spage).group(1)
+            ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', spage).group(1)
             balloon.show(icopath, ba_re, ba_to, 4)
         return 'Succeed'
     else:
         print('Error: login failed')
-
-def savecookie(lPAGE,lURL):
-    import urllib.parse as urlpar
-    cookielst = re.findall(r'setCookie\("(.+)",\s{0,}"(.+)?",\s?.?365.?\)', lPAGE)
-    cookiedic = {i[0]: urlpar.quote(i[1], safe='=&') for i in cookielst}
+        if '认证信息无效' in lpage:
+            print('Error: CookieFailed')
+            return 'CookieFail'
+        else:
+            return 'Failed'
+def savecookie(lpage,lURL):
+    import urllib.parse
+    cookielst = re.findall(r'setCookie\("(.+)",\s*"(.+)?",\s?.?365.?\)', lpage)
+    cookiedic = {i[0]: urllib.parse.quote(i[1], safe='=&') for i in cookielst}
     cookiedic['supportCookie'] = 'YES'
 
-    lURL = lURL.replace('https://', '')
-    serverip = lURL.partition(':')[0]
-    path = '/' + lURL.partition('/')[2]
+    lurl = lURL.replace('https://', '')
+    serverip = lurl.partition(':')[0]
+    path = '/' + lurl.partition('/')[2]
+
     with open('cookie.txt', 'w') as cookiefile:
         cookiefile.write('#LWP-Cookies-2.0\n')
         for i in cookiedic:
-            cookiefile.write('Set-Cookie3: %s=%s; path="%s";\
-domain="%s"; path_spec; expires="2015-10-10 05:17:57Z";\
-httponly=None;version=0\n' % (i, cookiedic[i], path, serverip))
+            cookiefile.write('Set-Cookie3: %s=%s; path="%s"; \
+domain="%s"; path_spec; expires="2015-10-10 05:17:57Z"; \
+httponly=None; version=0\n' % (i, cookiedic[i], path, serverip))
 
-if __name__ == '__main__':
-    login_noC()
+
+try:
+    cookiejar.load()
+    print('Info: Using Cookie')
+    if login_c() == 'CookieFail':
+        login_noc()
+except:
+    login_noc()
