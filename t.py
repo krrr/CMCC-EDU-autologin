@@ -61,7 +61,7 @@ def login_c():
 
 def checker(lpage):
     if 'user_status.php?' in lpage:
-        print('Info: login succeed')
+        print('Info: Login succeed')
         savecookie(lpage,lURL)
         # Time Reminder
         if 'remind' in sys.argv:
@@ -76,11 +76,11 @@ def checker(lpage):
             balloon.show(icopath, ba_re, ba_to, 4)
         return 'Succeed'
     else:
-        print('Error: login failed')
         if '认证信息无效' in lpage:
             print('Error: CookieFailed')
             return 'CookieFail'
         else:
+            print('Error: Login failed')
             return 'Failed'
 def savecookie(lpage,lURL):
     import urllib.parse
