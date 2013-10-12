@@ -8,8 +8,25 @@ It works in a university located in Jinhua,Zhejiang Province,China.
 
 Usage/使用方法
 ----
+#####(Only python3 now)
+Time Reminder enabled:
+```
+t.py username password remind
+```
+Time Reminder disabled:
+```
+t.py username password
+```
 
-
+#####(暂时只能工作在Python3下)
+启用剩余时间提醒:
+```
+t.py username password remind
+```
+禁用剩余时间提醒:
+```
+t.py username password
+```
 Automation/自动化
 ----
 Using the Scheduled task of Windows,you can login automatically when you connect to CMCC-EDU.see this [page](http://superuser.com/questions/262799/how-to-launch-a-command-on-network-connection-disconnection).
