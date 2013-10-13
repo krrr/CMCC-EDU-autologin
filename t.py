@@ -55,7 +55,7 @@ def login_noc():
                % (username, passwd, acname, acip, userip)
 
     lpage = opener.open(lURL, data.encode('utf-8')).read()
-    return checker(lpage.decode('gbk'))
+    return checker(lpage.decode('gbk'), False)
 
 
 def login_c():
@@ -64,13 +64,14 @@ def login_c():
 &loginmode=cookie' % (acname, acip, userip)
 
     lpage = opener.open(lURL, data.encode('utf-8')).read()
-    return checker(lpage.decode('gbk'))
+    return checker(lpage.decode('gbk'), True)
 
 
-def checker(lpage):
+def checker(lpage, is_c):
     if 'user_status.php?' in lpage:
         print('Info: Login succeed')
-        savecookie(lpage, lURL)
+        # skip saving cookie when login successfully by cookie
+        if not is_c: savecookie(lpage, lURL)
         # Time Reminder
         if 'remind' in sys.argv:
             import balloon
