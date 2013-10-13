@@ -10,7 +10,7 @@ It works in a university located in Jinhua,Zhejiang Province,China.
 Usage/使用方法
 ----
 
-Time Reminder enabled:
+Time Reminder enabled(Windows Vista+ only):
 ```
 t.py username password remind
 ```
@@ -22,7 +22,7 @@ Cookie will be saved when successfully login the first time.When failed logging 
 
 ----
 
-启用剩余时间提醒:
+启用剩余时间提醒(仅Windows Vista以上):
 ```
 t.py username password remind
 ```
