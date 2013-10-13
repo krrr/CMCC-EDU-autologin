@@ -2,11 +2,12 @@
 import urllib.request as Urlreq
 import http.cookiejar as Cookie
 import sys
+import os
 
-if '\\' in sys.argv[0]:  # Run as exe
+if os.sep not in sys.argv[0]:  # Run as exe
     path = ''
 else:
-    path = sys.argv[0].rpartition('\\')[0] + '\\'
+    path = sys.argv[0].rpartition(os.sep)[0] + os.sep
 
 try:
     username = sys.argv[1]
