@@ -12,5 +12,9 @@ def show(icopath, used, total, showtime):
     Sleep %s
     $objNotifyIcon.Visible = $False
     exit''' % (icopath, used, total, showtime)
+    
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-    subprocess.Popen(['powershell.exe', ps])
+
+    subprocess.Popen(['powershell.exe', ps], startupinfo=startupinfo)
