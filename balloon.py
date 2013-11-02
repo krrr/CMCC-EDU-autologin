@@ -53,9 +53,8 @@ class NOTIFYICONDATA(Structure):
 
 tiptypedic = {'info':1, 'error':3}
 
-def show(title, body, tiptype='info', timeout=5, winver=6):
-    path = __file__.rpartition('\\')[0]+'\\icon.ico'
-    path = path.replace('\\', r'\\')
+def show(icopath, title, body, tiptype='info', timeout=5, winver=6):
+    icopath = icopath.replace('\\', '\\\\')
 
     if winver >= 6: # Windows Vista and later
         cbsize = sizeof(NOTIFYICONDATA)
@@ -69,7 +68,7 @@ def show(title, body, tiptype='info', timeout=5, winver=6):
             uFlags=2|16|128, #NIF_ICON | NIF_INFO | NIF_SHOWTIP
             szInfo=body,
             szInfoTitle=title,
-            hIcon=LoadImage(None, path, 1, 16, 16, 0x10),
+            hIcon=LoadImage(None, icopath, 1, 16, 16, 0x10),
             dwInfoFlags=tiptypedic[tiptype]
             )
     Shell_NotifyIcon(0, byref(nid)) # NIM_ADD
@@ -77,5 +76,5 @@ def show(title, body, tiptype='info', timeout=5, winver=6):
     Shell_NotifyIcon(2, byref(NOTIFYICONDATA(hWnd=0, uID=0))) # NIM_DELETE
 
 if __name__ == '__main__':
-    show('Title', 'Body','error', timeout=1)
-    show('Title', 'Body', timeout=1)
+    show('', 'Title', 'Body','error', timeout=1)
+    show('', 'Title', 'Body', timeout=1)

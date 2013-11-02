@@ -23,7 +23,7 @@ Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.3072\
 9; .NET CLR 3.0.30729; Tablet PC 2.0)'), ('Accept-Encoding', 'gzip, deflate')]
 
 try:
-    temp = str(opener.open('http://8.8.8.8').read())
+    temp = str(opener.open('http://8.8.8.8', timeout=8).read())
 except:
     print('Error: network connection is bad or network connected is not CMCC')
     sys.exit()
@@ -69,26 +69,28 @@ def login_c():
 
 def checker(lpage, is_c):
     if 'user_status.php?' in lpage:
-        print('Info: Login succeed')
+        print('Login succeed')
         # skip saving cookie when login successfully by cookie
         if not is_c: savecookie(lpage, lURL)
         # Time Reminder
         if 'remind' in sys.argv:
             import balloon
+
             # sURL:for going to a page contains remianing time,logout URL.
             surl = re.search(r"window.location = '(.+?)';", lpage).group(1)
             spage = opener.open(surl.replace(' ', '%20')).read()
             spage = spage.decode('gbk')
+            icopath = path + 'icon.ico'
             ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', spage).group(1)
             ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', spage).group(1)
-            balloon.show('Time Reminder', '%s/%s (min)  [used/total]' % (ba_re,ba_to))
+            balloon.show(icopath, 'Time Reminder', '%s/%s (min)  [used/total]' % (ba_re,ba_to))
         return 'Succeed'
     else:
         if '认证信息无效' in lpage:
             print('Error: CookieFailed')
             return 'CookieFail'
         else:
-            print('Error: Login failed')
+            print('Login failed')
             return 'Failed'
 
 
