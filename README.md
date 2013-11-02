@@ -31,9 +31,10 @@ t.py username password remind
 t.py username password
 ```
 第一次成功登陆时会保存Cookie。当用Cookie登录失败时会使用无Cookie的登录方式。
-Automation/自动化
-----
-Using the Scheduled task of Windows,you can login automatically when you connect to CMCC-EDU.see this [page](http://superuser.com/questions/262799/how-to-launch-a-command-on-network-connection-disconnection).
-But logout can only be done manually.
 
-借助Windows的计划任务功能，你能在成功连接至CMCC-EDU后自动登录。
+----
+----
+Using the Scheduled Task of Windows,it can run automatically when connected to CMCC-EDU:[HOWTO](http://superuser.com/questions/262799/how-to-launch-a-command-on-network-connection-disconnection).
+
+
+借助Windows的计划任务功能，可以在成功连接至CMCC-EDU后自动运行来登录。但是由于无线网络的连接质量不确定，它工作得并不好。
