@@ -79,10 +79,9 @@ def checker(lpage, is_c):
             surl = re.search(r"window.location = '(.+?)';", lpage).group(1)
             spage = opener.open(surl.replace(' ', '%20')).read()
             spage = spage.decode('gbk')
-            icopath = path + 'icon.ico'
             ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', spage).group(1)
             ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', spage).group(1)
-            balloon.show(icopath, ba_re, ba_to, 4)
+            balloon.show('Time Reminder', '%s/%s (min)  [used/total]' % (ba_re,ba_to))
         return 'Succeed'
     else:
         if '认证信息无效' in lpage:
