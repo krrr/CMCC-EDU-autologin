@@ -18,7 +18,8 @@
         config.read(path + 'config.ini')
         username = config['Main']['Username']
         passwd = config['Main']['Password']
-        timereminder_on = bool(config['Main']['Timereminder'])
+        timereminder_on = config['Main'].getboolean('Timereminder')
+        
         if 'built-in' not in str(printfunc):  # GUI enabled
             def myprint(dat): printfunc(dat,path,config,sys)
         else:
@@ -26,7 +27,8 @@
     except:
         myprint('Error: Failed loading config file')
         sys.exit()
-
+    
+    print(timereminder_on)
     cookiejar = Cookie.LWPCookieJar(path + 'cookie.txt')
     opener = Urlreq.build_opener(Urlreq.HTTPCookieProcessor(cookiejar))
     opener.addheaders = [('User-agent', 'Mozilla/4.0 (compatible; MSIE 8.0;\
@@ -57,12 +59,12 @@
             hidvad = hidvad.replace('|', '%7C')
             vad = hidvad[:4]
             data = 'username=%s&password=%s&loginvalidate=%s&loginhiddenvalidate=%s\
-    &loginmode=static&wlanacssid=CMCC-EDU&wlanacname=%s&wlanacip=%s\
-    &wlanuserip=%s&issaveinfo=1' \
+            &loginmode=static&wlanacssid=CMCC-EDU&wlanacname=%s&wlanacip=%s\
+            &wlanuserip=%s&issaveinfo=1' \
                    % (username, passwd, vad, hidvad, acname, acip, userip)
         except:  # no validation code
             data = 'username=%s&password=%s&loginmode=static&wlanacssid=CMCC-EDU\
-    &wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=1' \
+            &wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=1' \
                    % (username, passwd, acname, acip, userip)
 
         lpage = opener.open(lURL, data.encode('utf-8')).read()
@@ -72,7 +74,7 @@
     def login_c():
         cookiejar.load()
         data = 'wlanacname=%s&wlanacip=%s&wlanuserip=%s&wlanacssid=CMCC-EDU\
-    &loginmode=cookie' % (acname, acip, userip)
+        &loginmode=cookie' % (acname, acip, userip)
 
         lpage = opener.open(lURL, data.encode('utf-8')).read()
         return checker(lpage.decode('gbk'), True)
@@ -80,7 +82,6 @@
 
     def checker(lpage, is_c):
         if 'user_status.php?' in lpage:
-            if 'built-in' in str(myprint): myprint('Login succeed')
             # skip saving cookie when login successfully by cookie
             if not is_c: savecookie(lpage, lURL)
             if timereminder_on:  # Time Reminder
@@ -93,6 +94,9 @@
                 ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', spage).group(1)
                 ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', spage).group(1)
                 myprint('Time Usage: %s/%s (min)  [used/total]' % (ba_re,ba_to))
+            else:
+                myprint('Login succeed')
+                
             return 'Succeed'
         else:
             if '认证信息无效' in lpage:
@@ -119,8 +123,8 @@
         cookiefile.write('#LWP-Cookies-2.0\n')
         for i in cookiedic:
             cookiefile.write('Set-Cookie3: %s=%s; path="%s"; \
-    domain="%s"; path_spec; expires="2017-10-10 05:17:57Z"; \
-    httponly=None; version=0\n' % (i, cookiedic[i], cpath, serverip))
+        domain="%s"; path_spec; expires="2017-10-10 05:17:57Z"; \
+        httponly=None; version=0\n' % (i, cookiedic[i], cpath, serverip))
         cookiefile.close()
 
     try:

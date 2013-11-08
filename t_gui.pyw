@@ -1,9 +1,10 @@
 ﻿from mainfunc import main
 
-def print_gui(dat,path,config,sys):
+def print_gui(dat, path, config, sys):
     import balloon
 
     if 'Info' in dat: return None
+    
     if 'Error' in dat or 'fail' in dat:
         tiptype = 'error'
     elif 'Warning' in dat:
