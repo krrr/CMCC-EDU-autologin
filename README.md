@@ -9,27 +9,15 @@ It works in a university located in Jinhua,Zhejiang Province,China.
 **(Only python3 now)/(暂时只能工作在Python3下)**
 Usage/使用方法
 ----
+Edit config.ini first,then run t.py for console mode,
+or run t_gui.pyw will enable GUI mode which is Windows only.
 
-Time Reminder enabled(Windows Vista+ only):
-```
-t.py username password remind
-```
-Time Reminder disabled:
-```
-t.py username password
-```
-Cookie will be saved when successfully login the first time.When failed logging in by cookie,it will fallback to no-cookie login method.
+Cookie will be saved when successfully login the first time.When failed logging in by cookie,
+it will fallback to no-cookie login method.
 
 ----
+首先编辑config.ini文件，然后运行t_gui.py（GUI模式）或者t.py（命令行模式）。
 
-启用剩余时间提醒(仅Windows Vista以上):
-```
-t.py username password remind
-```
-禁用剩余时间提醒:
-```
-t.py username password
-```
 第一次成功登陆时会保存Cookie。当用Cookie登录失败时会使用无Cookie的登录方式。
 
 ----

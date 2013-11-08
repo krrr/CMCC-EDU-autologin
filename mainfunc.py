@@ -1,6 +1,5 @@
 ﻿def main(printfunc=print):
-    "GUI is disabled when print function is built-in one"
-    global myprint, myprint
+    """GUI is disabled when print function is built-in one"""
     import re
     import urllib.request as Urlreq
     import http.cookiejar as Cookie
@@ -25,10 +24,9 @@
         else:
             myprint = printfunc
     except:
-        myprint('Error: Failed loading config file')
+        print('Error: Failed loading config file')
         sys.exit()
-    
-    print(timereminder_on)
+
     cookiejar = Cookie.LWPCookieJar(path + 'cookie.txt')
     opener = Urlreq.build_opener(Urlreq.HTTPCookieProcessor(cookiejar))
     opener.addheaders = [('User-agent', 'Mozilla/4.0 (compatible; MSIE 8.0;\
@@ -85,8 +83,6 @@
             # skip saving cookie when login successfully by cookie
             if not is_c: savecookie(lpage, lURL)
             if timereminder_on:  # Time Reminder
-                import balloon
-
                 # sURL:for going to a page contains remianing time,logout URL.
                 surl = re.search(r"window.location = '(.+?)';", lpage).group(1)
                 spage = opener.open(surl.replace(' ', '%20')).read()
@@ -108,7 +104,7 @@
 
 
     def savecookie(lpage, lurl):
-        "Parse javascript in lpage and save the cookie to cookie.txt"
+        """Parse javascript in lpage and save the cookie to cookie.txt"""
         import urllib.parse
 
         cookielst = re.findall(r'setCookie\("(.+)",\s*"(.+)?",\s?.?365.?\)', lpage)
