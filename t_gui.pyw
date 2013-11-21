@@ -1,4 +1,5 @@
-﻿from mainfunc import main
+﻿# .pyw for running on Windows without console.
+from mainfunc import main
 
 def print_gui(dat, path, config, sys):
     import balloon

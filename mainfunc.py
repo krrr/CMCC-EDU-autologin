@@ -1,12 +1,12 @@
-﻿def main(printfunc=print):
-    """GUI is disabled when print function is built-in one"""
-    import re
-    import urllib.request as Urlreq
-    import http.cookiejar as Cookie
-    import sys
-    import os
-    import configparser
+﻿import re
+import urllib.request as Urlreq
+import http.cookiejar as Cookie
+import sys
+import os
+import configparser
 
+def main(printfunc=print):
+    """GUI disabled when print function is built-in one"""
     if os.sep not in sys.argv[0]:  # Run as exe
         path = ''
     else:
@@ -30,14 +30,18 @@
     cookiejar = Cookie.LWPCookieJar(path + 'cookie.txt')
     opener = Urlreq.build_opener(Urlreq.HTTPCookieProcessor(cookiejar))
     opener.addheaders = [('User-agent', 'Mozilla/4.0 (compatible; MSIE 8.0;\
-    Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.3072\
-    9; .NET CLR 3.0.30729; Tablet PC 2.0)')]
+Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.3072\
+9; .NET CLR 3.0.30729; Tablet PC 2.0)')]
 
     try:
         temp = str(opener.open('http://8.8.8.8', timeout=8).read())
     except:
-        myprint('Error: network connection is bad or network connected is not CMCC')
-        sys.exit()
+        try:
+            temp = opener.open('http://www.google.cn/favicon.ico', timeout=5)
+        except:  # no internet connection
+            myprint('Error: network connection is bad or network connected is not CMCC')
+        finally:
+            sys.exit()
 
     # iURL: for getting lURL,validates,userip,acip...
     # lURL: for sending all data to login(HTTP POST).
@@ -57,12 +61,12 @@
             hidvad = hidvad.replace('|', '%7C')
             vad = hidvad[:4]
             data = 'username=%s&password=%s&loginvalidate=%s&loginhiddenvalidate=%s\
-            &loginmode=static&wlanacssid=CMCC-EDU&wlanacname=%s&wlanacip=%s\
-            &wlanuserip=%s&issaveinfo=1' \
+&loginmode=static&wlanacssid=CMCC-EDU&wlanacname=%s&wlanacip=%s\
+&wlanuserip=%s&issaveinfo=1' \
                    % (username, passwd, vad, hidvad, acname, acip, userip)
         except:  # no validation code
             data = 'username=%s&password=%s&loginmode=static&wlanacssid=CMCC-EDU\
-            &wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=1' \
+&wlanacname=%s&wlanacip=%s&wlanuserip=%s&issaveinfo=1' \
                    % (username, passwd, acname, acip, userip)
 
         lpage = opener.open(lURL, data.encode('utf-8')).read()
@@ -72,7 +76,7 @@
     def login_c():
         cookiejar.load()
         data = 'wlanacname=%s&wlanacip=%s&wlanuserip=%s&wlanacssid=CMCC-EDU\
-        &loginmode=cookie' % (acname, acip, userip)
+&loginmode=cookie' % (acname, acip, userip)
 
         lpage = opener.open(lURL, data.encode('utf-8')).read()
         return checker(lpage.decode('gbk'), True)
@@ -99,9 +103,12 @@
                 myprint('Warning: CookieFailed')
                 return 'CookieFail'
             else:
-                myprint('Login failed')
-                return 'Failed'
-
+                edic = {'与在线用户名不一致': 'Error: We have not been logged out',
+                        '密码错误': 'Error: Wrong username or password'}
+                for e in edic:
+                    if e in lpage:
+                        myprint(edic[e])
+                        return 'Failed'
 
     def savecookie(lpage, lurl):
         """Parse javascript in lpage and save the cookie to cookie.txt"""
@@ -119,8 +126,8 @@
         cookiefile.write('#LWP-Cookies-2.0\n')
         for i in cookiedic:
             cookiefile.write('Set-Cookie3: %s=%s; path="%s"; \
-        domain="%s"; path_spec; expires="2017-10-10 05:17:57Z"; \
-        httponly=None; version=0\n' % (i, cookiedic[i], cpath, serverip))
+domain="%s"; path_spec; expires="2017-10-10 05:17:57Z"; \
+httponly=None; version=0\n' % (i, cookiedic[i], cpath, serverip))
         cookiefile.close()
 
     try:
