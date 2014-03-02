@@ -69,8 +69,6 @@ def main():
             surl = re.search(r"window.location = '(.+?)';", post).group(1)
             try:
                 spage = requests.get(surl, timeout=5, headers=headers).text
-                with open(path+'1.txt', 'w', encoding='utf-8') as f:
-                    f.write(spage)
                 ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', spage).group(1)
                 ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', spage).group(1)
                 print('Succeed.Time Usage: %s/%s (min)  [used/total]' % (ba_re,ba_to))
