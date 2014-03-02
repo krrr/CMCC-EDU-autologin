@@ -1,6 +1,6 @@
 """Display balloon tip on Windows.
-This module provides a function that display a tray icon with balloon tip
-by calling winapi directly."""
+This module provides a class that display a tray icon and show balloon tip
+by calling winapi directly.Bug:tray icon will disappear when cursor moving over."""
 
 # Modified from Pyzen and gingerprawn.The license of gingerprawn is GPLv3.
 #
@@ -58,31 +58,44 @@ class NOTIFYICONDATA(Structure):
         ('hBalloonIcon', HICON),
         ]
 
-tiptypedic = {'noico': 0, 'info': 1, 'warning': 2, 'error': 3}
 
+class Notifier:
+    # dwInfoFlags
+    info = 1
+    warning = 2
+    error = 3
+    def __init__(self, winver=6, icopath='', timeout=0):
+        icopath = icopath.replace('\\', '\\\\')
+        self.timeout = timeout
+        if winver >= 6:  # Windows Vista and later
+            cbsize = sizeof(NOTIFYICONDATA)
+        else:            # Ignore version lower than XP
+            cbsize = 952
+        self.data = NOTIFYICONDATA(
+            cbSize=cbsize,
+            hWnd=0,
+            uID=0,
+            uFlags=2,  # NIF_ICON
+            hIcon=LoadImage(None, icopath, 1, 16, 16, 0x10),
+            )
+        Shell_NotifyIcon(0, byref(self.data))  # NIM_ADD
 
-def show(icopath, title, body, tiptype='info', timeout=5, winver=6):
-    icopath = icopath.replace('\\', '\\\\')
+    def destroy(self):
+        return Shell_NotifyIcon(2, byref(self.data))  # NIM_DELETE
 
-    if winver >= 6:  # Windows Vista and later
-        cbsize = sizeof(NOTIFYICONDATA)
-    else:            # Ignore version lower than XP
-        cbsize = 952
+    def show_tip(self, type, title, body):
+        self.data.szInfo = body
+        self.data.szInfoTitle = title
+        self.data.dwInfoFlags = type
+        self.data.uFlags = 2|16|128  # NIF_ICON | NIF_INFO | NIF_SHOWTIP
+        code = Shell_NotifyIcon(1, byref(self.data))  # NIM_MODIFY
+        if self.timeout: sleep(self.timeout)
+        return code
 
-    nid = NOTIFYICONDATA(
-        cbSize=cbsize,
-        hWnd=0,
-        uID=0,
-        uFlags=2|16|128,  # NIF_ICON | NIF_INFO | NIF_SHOWTIP
-        szInfo=body,
-        szInfoTitle=title,
-        hIcon=LoadImage(None, icopath, 1, 16, 16, 0x10),
-        dwInfoFlags=tiptypedic[tiptype]
-        )
-    Shell_NotifyIcon(0, byref(nid))  # NIM_ADD
-    sleep(timeout)
-    Shell_NotifyIcon(2, byref(NOTIFYICONDATA(hWnd=0, uID=0)))  # NIM_DELETE
 
 if __name__ == '__main__':
-    show('', 'Title', 'Body', 'error', timeout=1)
-    show('', 'Title', 'Body', timeout=1)
+    no = Notifier()
+    assert no.show_tip(no.error, 'aa', 'bb') == 1
+    sleep(3)
+    no.destroy()
+
