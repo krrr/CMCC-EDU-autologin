@@ -8,7 +8,7 @@ headers = {'User-agent': 'Mozilla/4.0'}
 test_url = 'http://www.google.cn/favicon.ico'
 errors = {'与在线用户名不一致': 'We have not been logged out',
           '密码错误': 'Wrong username or password'}
-cwd = os.getcwd()
+cwd = os.path.split(sys.argv[0])[0] if os.sep in sys.argv[0] else ''
 
 # load settings
 try:
@@ -27,7 +27,6 @@ if config['GUI']['Type'] == 'Win':
     no = balloon.Notifier(icopath=os.path.join(cwd, 'icon.ico'),
                           timeout=int(config['GUI']['Balloontimeout']),
                           winver=sys.getwindowsversion().major)
-
     def myprint(*args): no.show_tip(*args)
 else:
     def myprint(*args): pass
