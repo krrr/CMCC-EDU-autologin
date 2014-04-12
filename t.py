@@ -4,27 +4,29 @@ import sys
 import os
 import configparser
 
-headers = {'User-agent': 'Mozilla/4.0'}
+headers = {'User-agent': 'Mozilla/4.0 (compatible; MSIE 8.0;)'}
 test_url = 'http://www.google.cn/favicon.ico'
 errors = {'与在线用户名不一致': 'We have not been logged out',
-          '密码错误': 'Wrong username or password'}
-cwd = os.path.split(sys.argv[0])[0] if os.sep in sys.argv[0] else ''
+          '已在线': 'We have not been logged out',
+          '密码错误': 'Wrong username or password',
+          '登录认证失败': 'Please reconnect WLAN'}
+fdir = os.path.dirname(os.path.realpath(__file__))
+form_exp = re.compile(r'''<input.+name=["'](.+?)["'].+value=["'](.*?)["'] />''')
 
 # load settings
 try:
     config = configparser.ConfigParser()
-    config.read(os.path.join(cwd, 'config.ini'))
+    config.read(os.path.join(fdir, 'config.ini'))
     username = config['Main']['Username']
     passwd = config['Main']['Password']
-    timereminder_on = config['Main'].getboolean('Timereminder')
-except:
+except Exception:
     print('Error: Failed loading config file')
     sys.exit(-1)
 
 # setup GUI
 if config['GUI']['Type'] == 'Win':
     import balloon
-    no = balloon.Notifier(icopath=os.path.join(cwd, 'icon.ico'),
+    no = balloon.Notifier(icopath=os.path.join(fdir, 'icon.ico'),
                           timeout=int(config['GUI']['Balloontimeout']),
                           winver=sys.getwindowsversion().major)
     def myprint(*args): no.show_tip(*args)
@@ -39,46 +41,20 @@ def main():
         sys.exit()
     else:
         print('Info: start login progress')
-
-    # prepare data for POST
+    # prepare data for POST, deal with iframe and interesting names
     iurl = re.search(r'id="Wp_frame" src="(.+?)" ', r.text).group(1)
-    iurlm, datastr = iurl.split('?')
-    posturl = iurlm.replace('input', 'do_login')  # for HTTP post
-    data = {}
-    for i in datastr.split('&'):
-        key, value = i.split('=')
-        data[key] = value
-    data.update({'loginmode': 'static',
-                 'username': username, 'password': passwd})
     ipage = requests.get(iurl, timeout=7, headers=headers).text
-
-    try:
-        print('Info: get validation code')
-        hidvad = re.search(r"validateid'  value='(.+?)'", ipage).group(1)
-        vad = hidvad[:4]
-        data.update({'loginvalidate': vad, 'loginhiddenvalidate': hidvad})
-    except:
-        print('Info: no validation code')
+    posturl = re.search('<form.+action="(.+?)">', ipage).group(1)
+    data = {'userName': username, 'userPwd': passwd}
+    for l in ipage.split('\n'):
+        s = form_exp.search(l)
+        if s:
+            data[s.group(1)] = s.group(2)
     post = requests.post(posturl, data, timeout=5, headers=headers).text
-
     # check if login succeed
-    if 'user_status.php?' in post:
-        if timereminder_on:  # Time Reminder
-            # sURL:for going to a page contains remianing time,logout URL.
-            surl = re.search(r"window.location = '(.+?)';", post).group(1)
-            try:
-                spage = requests.get(surl, timeout=5, headers=headers).text
-                ba_re = re.search(r'本月套餐已用：(.+?).0 分钟', spage).group(1)
-                ba_to = re.search(r'本月套餐总量：(.+?).0 分钟', spage).group(1)
-                print('Succeed.Time Usage: %s/%s (min)  [used/total]' % (ba_re,ba_to))
-                myprint(1, 'Cxx-autologin succeed',
-                        'Time Usage: %s/%s (min)  [used/total]' % (ba_re, ba_to))
-            except Exception:
-                print('Succeed (Failed getting time usage)')
-                myprint(1, 'Cxx-autologin succeed', 'Failed getting time usage')
-        else:
-            print('Succeed')
-            myprint(1, '', 'Cxx autologin succeed')
+    if 'portalLoginRedirect' in post:
+        print('Succeed')
+        myprint(1, '', 'Cxx autologin succeed')
         sys.exit()
     else:
         for e in errors:
@@ -86,7 +62,10 @@ def main():
                 print('Error: ' + errors[e])
                 myprint(3, 'Cxx-autologin failed', errors[e])
                 sys.exit(-1)
-        raise Warning('Unknown error type')
+        else:
+            with open('error_page', 'w', encoding='utf-8') as f:
+                f.write(post)
+            raise Exception('Unknown error type')
 
 if __name__ == '__main__':
     try:
@@ -99,6 +78,5 @@ if __name__ == '__main__':
         print('Error: Unknown error (%s)' % str(e))
         myprint(2, 'Cxx-autologin dead', 'We found a new bug: %s' % str(e))
         raise
-    finally:
-        # destrpy trayicon
+    finally:  # destrpy trayicon
         if 'no' in globals(): no.destroy()
