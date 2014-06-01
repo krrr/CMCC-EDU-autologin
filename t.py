@@ -5,7 +5,7 @@ import os
 import configparser
 
 headers = {'User-agent': 'Mozilla/4.0 (compatible; MSIE 8.0;)'}
-test_url = 'http://www.google.cn/favicon.ico'
+test_url = 'http://www.msftncsi.com/'
 errors = {'与在线用户名不一致': 'We have not been logged out',
           '已在线': 'We have not been logged out',
           '密码错误': 'Wrong username or password',
