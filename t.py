@@ -11,7 +11,7 @@ errors = {'与在线用户名不一致': 'We have not been logged out',
           '密码错误': 'Wrong username or password',
           '登录认证失败': 'Please reconnect WLAN'}
 fdir = os.path.dirname(os.path.realpath(__file__))
-form_exp = re.compile(r'''<input.+name=["']([^'"]+?)["'].+value=["']([^'"]*)["'].+/>''')
+form_exp = re.compile(r'''<input.+name=["'](wlanAcName|wlanAcIp|wlanUserIp|ssid|verifyHidden|idissaveinfo|passType)["'].+value=["']([^'"]*)["'].+/>''')
 
 # load settings
 try:
@@ -42,9 +42,7 @@ def main():
     else:
         print('Info: start login progress')
     # prepare data for POST, deal with iframe and interesting names
-    iurl = re.search(r'id="Wp_frame" src="(.+?)" ', r.text).group(1)
-    print('Debug: iframe found: %s' % iurl)
-    ipage = requests.get(iurl, timeout=7, headers=headers).text
+    ipage = r.text
     posturl = re.search(r'''<form.+method='post' action="(.+?)">''', ipage).group(1)
     print('Debug: post-url: %s' % posturl)
     data = {'userName': username, 'userPwd': passwd}
