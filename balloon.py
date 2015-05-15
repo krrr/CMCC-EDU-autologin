@@ -1,8 +1,9 @@
 """Display balloon tip on Windows.
 This module provides a class that display a tray icon and show balloon tip
-by calling winapi directly.Bug:tray icon will disappear when cursor moving over."""
+by calling win32api directly.
+Bug: tray icon will disappear when cursor moving over."""
 
-# Modified from Pyzen and gingerprawn.The license of gingerprawn is GPLv3.
+# Modified from Pyzen and gingerprawn. The license of gingerprawn is GPLv3.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,17 +15,16 @@ by calling winapi directly.Bug:tray icon will disappear when cursor moving over.
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-
-
+import sys
 from ctypes import *
 from ctypes.wintypes import *
 from time import sleep
 
-#References
-#LoadImage function:
-#http://msdn.microsoft.com/en-us/library/windows/desktop/ms648045%28v=vs.85%29.aspx
-#NOTIFYICONDATA structure:
-#http://msdn.microsoft.com/en-us/library/windows/desktop/bb773352%28v=vs.85%29.aspx
+# References
+# LoadImage function:
+# http://msdn.microsoft.com/en-us/library/windows/desktop/ms648045%28v=vs.85%29.aspx
+# NOTIFYICONDATA structure:
+# http://msdn.microsoft.com/en-us/library/windows/desktop/bb773352%28v=vs.85%29.aspx
 
 Shell_NotifyIcon = windll.shell32.Shell_NotifyIconW
 LoadImage = windll.user32.LoadImageW
@@ -36,7 +36,7 @@ class GUID(Structure):
         ('Data2', c_uint16),
         ('Data3', c_uint16),
         ('Data4', c_ubyte * 8),
-        ]
+    ]
 
 
 class NOTIFYICONDATA(Structure):
@@ -56,15 +56,14 @@ class NOTIFYICONDATA(Structure):
         ('dwInfoFlags', DWORD),
         ('guidItem', GUID),
         ('hBalloonIcon', HICON),
-        ]
+    ]
 
 
 class Notifier:
-    # dwInfoFlags
-    info = 1
-    warning = 2
-    error = 3
-    def __init__(self, winver=6, icopath='', timeout=0):
+    info, warning, error = range(1, 4)  # also dwInfoFlags
+    
+    def __init__(self, icopath='', timeout=0):
+        winver = sys.getwindowsversion().major
         icopath = icopath.replace('\\', '\\\\')
         self.timeout = timeout
         if winver >= 6:  # Windows Vista and later
