@@ -2,12 +2,12 @@ CMCC-EDU-autologin is a script for solving the captive portal of CMCC WLAN (only
 It only supports logging in.
 It works in Zhejiang Province, China.
 
-Requires: Python3, requests, pynotify2 (if GUI notify for Unix enabled)
+Requires: Python3, requests, notify2 (if GUI notify for Unix enabled)
 
 这是一个用来登录CMCC公共热点（仅支持SSID为“CMCC-EDU”的接入点）的脚本。
 只支持登录（没有保持登录状态、登出的功能），仅在浙江省金华市测试通过。
 
-依赖：Python3，Requests，pynotify (如果需要使用Unix下的GUI)
+依赖：Python3，Requests，notify2 (如果需要使用Unix下的GUI)
 
 Usage/使用方法
 ----
