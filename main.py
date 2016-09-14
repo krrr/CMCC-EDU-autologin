@@ -13,7 +13,7 @@ errors = {'与在线用户名不一致': 'We have not been logged out',
           '密码错误': 'Wrong username or password',
           '登录认证失败': 'Please reconnect WLAN'}
 fdir = os.path.dirname(os.path.realpath(__file__))
-icopath = os.path.join(fdir, 'icon.ico')
+icopath = os.path.join(fdir, 'cmcc-logo.ico')
 form_exp = re.compile(r'''<input.+name=["'](wlanAcName|wlanAcIp|wlanUserIp|ssid|verifyHidden|'''
                       '''idissaveinfo|passType)["'].+value=["']([^'"]*)["'].+/>''')
 
