@@ -1,0 +1,177 @@
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+
+<script type="text/javascript">
+	var ctxPath = "/zmcc";
+	var httpBase = "https://211.138.125.52:7090";
+	var httpsBase = "https://211.138.125.52:7090";
+	var vcUrl = "/zmcc/generateVerifyCode.wlan";
+	var vys = 6;
+	var selfServiceLink = "http://www.zj.10086.cn";
+	var downloadClientLink = "http://wlan.10086.cn/download";
+	var hotspotLink = "http://wlan.10086.cn";
+</script>
+<script type="text/javascript" src="/zmcc/resources/ailk/js/jquery.min.js"></script>
+<script type="text/javascript" src="/zmcc/resources/ailk/js/common/common.js"></script>
+<script type="text/javascript" src="/zmcc/resources/ailk/themes/zjeduMobile-v2/js/script.js"></script>
+<link type="text/css" rel="stylesheet" href="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/style.css" />
+<link rel="shortcut icon" href="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/favicon.jpg" type="image/vnd.microsoft.icon" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1.0" />
+<title>中国移动随e行校园WLAN业务</title>
+<script>
+$(document).ready(function(e) {
+	$(".bar .barTitle").click(function(e) {
+		$(".bar .barTitle").css({"background-image":"url(/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/bg_bar.gif)","color":"black"});
+		var ndex = $(this).index();
+		var nmargin = 34 + 73 * ndex + "px";
+		$(this).css({"background-image":"url(/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/bg_bar_hover.gif)","color":"white"});
+		$(".arrow").css("margin-left", nmargin);
+		$(".tabcon").hide();
+		$(".tabcon").eq(ndex).show();
+	});
+	$(".bar .barTitle:first").click();
+	
+	initFunc1();
+});
+
+var onlinetime = 0;
+var newSeconds = 0;
+
+function refreshTime(nSeconds) {
+	var day = Math.floor(newSeconds / 86400);
+	var hh  = Math.floor(newSeconds / 3600);
+	if (hh >= 24)
+		hh  = Math.floor(hh % 24);
+
+	if (hh < 10)
+		hh = '0' + hh;
+
+	var mm = Math.floor((newSeconds % 3600) / 60);
+	if (mm < 10)
+		mm = '0' + mm;
+
+	var ss = Math.floor(newSeconds % 60);
+
+	if (ss < 10)
+		ss = '0' + ss;
+
+	if (day >= 1)
+		document.getElementById('time').innerHTML = day + '天' + hh + ':' + mm + ':' + ss;
+	else
+		document.getElementById('time').innerHTML = hh + ':' + mm + ':' + ss;
+}
+
+inittime1 = "";
+if ( 0 == inittime1 || "" == inittime1) {
+	var myDate1 = new Date();
+	inittime1 = myDate1.getTime();
+}
+
+function initFunc1() {
+	myDate0 = new Date();
+	newSeconds = (myDate0.getTime() + onlinetime * 1000 - inittime1) / 1000;
+	refreshTime(newSeconds);
+	setTimeout('initFunc1()', 1000);
+}
+function logout() {
+	if (!confirm("请确认下线！")) {
+		return;
+	}
+
+	$("#logoutBtn").removeAttr("onclick");
+
+	var submitInterval = 10;
+
+	setTimeout('$("#logoutBtn").attr("onclick", "logout()");', submitInterval * 1000);
+	var timestamp = new Date().getTime();
+	$('#logoutFormId').attr("action", httpBase + ctxPath + "/portalLogout.wlan?isCloseWindow=N&" + timestamp);
+	$("#logoutFormId").submit();
+}
+</script>
+</head>
+<body class="wrap">
+
+
+<div class="logo">
+	<div class="mobile">
+		<img src="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/logo.jpg" />
+	</div>
+	<div class="clear"></div>
+</div>
+<div class="content">
+	<div class="box login">
+		<div class="info"><span class="blue">18395920713</span>，您已登录成功</div>
+		<div class="tip orange">上网过程中不要关闭该窗口；如需下线，请点击"下线"，否则会造成异常，给您带来不便。</div>
+		<div class="menu">
+			<div class="used">本次登录时长：<span id="time" class="orange">00:00:00</span></div>
+			<div class="used">本月套餐总量：<span class="orange">15000分钟（其中校园15000分钟）,0MB</span></div>
+			<div class="used">本月套餐已用：<span class="orange">92分钟（其中校园92分钟）,0MB</span></div>
+			<div class="used">本月WLAN费用：<span class="orange">2.63元</span></div>
+			<div class="des">（其中套餐外费用0.00元，套餐月费按天折算，仅供参考，具体以月结账单为准）</div>
+			<div class="menu_type">您的订购信息：<span class="orange">校园WLAN40元套餐</span></div>
+		</div>
+		<form name='portal' id="logoutFormId" method='post'>
+		<div class="cancelText"><input class="cancelCB" type="checkbox" name="cancelinfo" id="cancelinfoid" value="yes" disabled="disabled" />取消自动登录</div>
+		<div class="btn" id="logoutBtn" onclick="logout()"><span>下</span>线</div>
+		<input type="hidden" name="wlanAcName" id="wlanAcName" value="0049.0579.571.00" />
+		<input type="hidden" name="wlanAcIp" id="wlanAcIp" value="" />
+		<input type="hidden" name="wlanUserIp" id="wlanUserIp" value="10.245.12.209" />
+		<input type="hidden" name="ssid" id="ssid" value="CMCC-EDU" />
+		<input type="hidden" name="userName" id="userName" value="18395920713" />
+		<input type="hidden" name="encryUser" id="encryUser" value="" />
+		<input type="hidden" name="passType" id="passType" value="1" />
+		<input type="hidden" name="isLocalUser" id="isLocalUser" value="2" />
+		<input type="hidden" name="loginTime" id="loginTime" value="" />
+		</form>
+	</div>
+<!--	<div class="search shadow box">
+		<iframe src="http://111.1.47.58/school/m_search.jsp?areacode=579&hotspot=&username=384E543544583765796730504F2F676A2B626F5852513D3D" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+	</div>
+	<div class="tab box">
+		<div class="tabwrap">
+			<div class="tabcon">
+				<iframe src="http://111.1.47.58/school/m_hot.jsp?areacode=579&hotspot=&username=384E543544583765796730504F2F676A2B626F5852513D3D" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+			</div>
+			<div class="tabcon navicon">
+				<iframe src="http://111.1.47.58/school/m_link.jsp?areacode=579&hotspot=&username=384E543544583765796730504F2F676A2B626F5852513D3D" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+			</div>
+			<div class="tabcon">
+				<iframe src="http://111.1.47.58/school/m_nav.jsp?areacode=579&hotspot=&username=384E543544583765796730504F2F676A2B626F5852513D3D" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+			</div>
+		</div>
+		<div class="arrow"><img src="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/arrow.gif" /></div>
+		<div class="bar">
+			<div class="barTitle">热点资讯</div>
+			<div class="barTitle">快速访问</div>
+			<div class="barTitle last">业务导航</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="box activity">
+		<iframe src="http://111.1.47.58/school/m_act.jsp?areacode=579&hotspot=&username=384E543544583765796730504F2F676A2B626F5852513D3D" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+	</div>
+	<div class="box sitenav">
+		<iframe src="http://111.1.47.58/school/m_site.jsp?areacode=579&hotspot=&username=384E543544583765796730504F2F676A2B626F5852513D3D" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+	</div> -->
+</div>
+
+
+<div class="copyright">浙ICP备05000809号中国移动浙江公司版权所有</div>
+</body>
+</html>

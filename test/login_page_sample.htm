@@ -1,0 +1,150 @@
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+
+
+<script type="text/javascript">
+	var ctxPath = "/zmcc";
+	var httpBase = "https://211.138.125.52:7090";
+	var httpsBase = "https://211.138.125.52:7090";
+	var vcUrl = "/zmcc/generateVerifyCode.wlan";
+	var vys = 6;
+	var selfServiceLink = "http://www.zj.10086.cn";
+	var downloadClientLink = "http://wlan.10086.cn/download";
+	var hotspotLink = "http://wlan.10086.cn";
+</script>
+<script type="text/javascript" src="/zmcc/resources/ailk/js/jquery.min.js"></script>
+<script type="text/javascript" src="/zmcc/resources/ailk/js/common/common.js"></script>
+<script type="text/javascript" src="/zmcc/resources/ailk/themes/zjeduMobile-v2/js/script.js"></script>
+<link type="text/css" rel="stylesheet" href="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/style.css" />
+<link rel="shortcut icon" href="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/favicon.jpg" type="image/vnd.microsoft.icon" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1.0" />
+<title>中国移动随e行校园WLAN业务</title>
+<script>
+$(document).ready(function(e) {
+	$(".bar .barTitle").click(function(e) {
+		$(".bar .barTitle").css({"background-image":"url(/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/bg_bar.gif)","color":"black"});
+		var ndex = $(this).index();
+		var nmargin = 34 + 73 * ndex + "px";
+		$(this).css({"background-image":"url(/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/bg_bar_hover.gif)","color":"white"});
+		$(".arrow").css("margin-left", nmargin);
+		$(".tabcon").hide();
+		$(".tabcon").eq(ndex).show();
+	});
+	$(".bar .barTitle:first").click();
+});
+</script>
+<script src="/zmcc/resources/ailk/js/mobile-pv.js?num=1491109121400"></script>
+</head>
+<body>
+
+
+<div class="logo">
+	<div class="mobile">
+		<img src="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/logo.jpg" />
+	</div>
+	<div class="clear"></div>
+</div>
+<div class="box content_index">
+	<div class="login">
+		<form name='login' id="loginFormID" method='post' action='https://211.138.125.52:7090/zmcc/portalLogin.wlan?1491109121400'>
+			<div class="entering">
+				<img src="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/user.gif" width="16" />
+				<label for="account">账号</label>
+				<input type="text" name="userName" id="userName" value="输入手机号码" onblur="if (value == '') value = '输入手机号码'" onfocus="if (value == '输入手机号码') value=''" />
+				<a id="autopwdapplybuttonid" href="javascript:void(0);" onclick="apply_autopwd()">临时密码</a>
+			</div>
+			<div class="entering">
+				<img src="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/locked.gif" width="16" />
+				<label for="password">密码</label>
+				<input type="text" name="_userPwd" id="_userPwd" value="输入固定密码/临时密码" onfocus="$('#_userPwd').hide();$('#userPwd').show().focus();" />
+				<input type="password" name="userPwd" id="userPwd" onblur="if (value == '') {$('#userPwd').hide();$('#_userPwd').show();}" style="display: none;" />
+				<a href="javascript:void(0);" onclick="modify_passwd()">忘记密码</a>
+			</div>
+			<div id="verifydiv" class="entering check">
+				<label for="check">验证码</label>
+				<input name="verifyCode" id="verifyCode" type="text" value="" />
+				<img style="width:72px;height:27px" id="verify" name="verify" ver="stimg" src="" onclick="javascript:gainVerifyCode($('img[ver=stimg]'), $('input[ver=stimg]'));" />
+				<input id="verifyHidden" name="verifyHidden" ver="stimg" type="hidden" value="" />
+				<a href="javascript:void(0);" onclick="javascript:gainVerifyCode($('img[ver=stimg]'), $('input[ver=stimg]'));">换一张</a>
+			</div>
+			<script type="text/javascript">
+				var is_verify = (readCookie("ALVERIFY") >= vys) ? true : false;
+				if (is_verify) {
+					gainVerifyCode($('img[ver=stimg]'), $('input[ver=stimg]'));
+				} else {
+					$("#verifydiv").hide();
+				}
+			</script>
+			<div class="autologin">
+				<input type="checkbox" name="autosaveuserinfo" id="autosaveuserinfoid" value='yes' />自动登录
+			</div>
+			<div id="info" class="tip"></div>
+			<div class="btn" onclick='checkField()' id="loginID"><span>登</span>录</div>
+			<input type='hidden' id='idissaveinfo' name='issaveinfo' value='' />
+			
+
+<input id="wlanAcName" name="wlanAcName" type="hidden" value="0049.0579.571.00" />
+<input id="wlanAcIp" name="wlanAcIp" type="hidden" value="" />
+<input id="wlanUserIp" name="wlanUserIp" type="hidden" value="10.245.12.209" />
+<input id="ssid" name="ssid" type="hidden" value="CMCC-EDU" />
+		</form>
+	</div>
+	<div class="tab">
+		<div class="tabwrap">
+			<div class="tabcon">
+				
+					
+						
+								<div class="hot"><a href='http://111.1.47.58:18080/waphots/sjyyt201512091246.html?areaCode=579' target='_blank'>1.手机营业厅，为您订制移动生活</a><span><img src='resources/ailk/themes/zjeduMobile-v2/css/images/hot.jpg' /></span></div>
+						
+					
+					
+				
+				<div class="allhot"><a href="http://111.1.47.58/school/wapwlan.do?areaCode=579" target="_blank">查看更多动态</a></div>
+			</div>
+			<div class="tabcon">
+				<div class="fee org">校园WLAN时长套餐</div>
+				<div class="fee">（1）标准资费：校园内指定区域超出套餐部分按0.02元/分钟计费;省内校园外、国内漫游（不含港澳台漫游）按0.05元/分钟计费，不足1分钟按1分钟计，发送KTEDU至10086；</div>
+				<div class="fee">（2）10元套餐：月费10元，包40小时 WLAN流量，超出后按标准资费，发送KTEDU10办理；</div>
+				<div class="fee">（3）20元套餐：月费20元，包100小时 WLAN流量，超出后按标准资费，发送KTEDU20办理；</div>
+				<div class="fee">（4）40元套餐：月费40元，包250小时 WLAN流量，超出后按标准资费，发送KTEDU40办理。</div>
+				<div class="fee">发送以上短信指令至10086即可开通或取消相应套餐。</div>
+			</div>
+			<div class="tabcon buss">
+				<div class="hot"><a href="/zmcc/resources/ailk/themes/zjeduMobile-v2/html/serviceInfo.html#serviceintro_01" target="_blank">校园套餐业务介绍</a></div>
+				<div class="hot"><a href="/zmcc/resources/ailk/themes/zjeduMobile-v2/html/serviceInfo.html#serviceintro_02" target="_blank">校园套餐业务开通变更及取消</a></div>
+				<div class="hot"><a href="/zmcc/resources/ailk/themes/zjeduMobile-v2/html/serviceInfo.html#serviceintro_03" target="_blank">固定密码修改及重置</a></div>
+				<div class="hot"><a href="/zmcc/resources/ailk/themes/zjeduMobile-v2/html/serviceInfo.html" target="_blank">自动登录功能说明</a></div>
+			</div>
+		</div>
+ 	    <div class="arrow"><img src="/zmcc/resources/ailk/themes/zjeduMobile-v2/css/images/arrow.gif" /></div>
+		<div class="bar">
+			<div class="barTitle">最新动态</div>
+			<div class="barTitle">套餐资费</div>
+			<div class="barTitle last">业务介绍</div>
+			<div class="barTitle2"><a href="http://wlan.10086.cn/download" target="_blank">APP下载</a></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
+
+
+<div class="copyright">浙ICP备05000809号中国移动浙江公司版权所有</div>
+</body>
+</html>
